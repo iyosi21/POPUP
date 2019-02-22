@@ -8,12 +8,9 @@ app = wx.App()
 
 # メッセージボックスを表示
 today = datetime.date.today()
-print(today)
-#wx.MessageBox(str(today)
 
-
-#CSVのファイル名は任意のものに変えてください。今はsample.csvにしています。
-f = open("sample.csv", "r")
+#CSV読み込み
+f = open("list.csv", "r")
 lst = list(csv.reader(f))
 warn_day =""
 
@@ -25,5 +22,6 @@ for row in range(len(lst)):
     if tod_day >= obj_day: #この辺で日付計算する
         warn_day = str(warn_day) + lst[row][0] + ","
 
-# メッセージボックスを表示
-wx.MessageBox(warn_day + "の保守が３ヶ月以内に終了します")
+if warn_day != "":
+    # メッセージボックスを表示
+    wx.MessageBox(warn_day + "の保守が３ヶ月以内に終了します", u'保守切れ通知', wx.ICON_EXCLAMATION)
