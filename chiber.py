@@ -12,7 +12,7 @@ today = datetime.date.today()
 #CSV読み込み
 f = open("list.csv", "r")
 lst = list(csv.reader(f))
-warn_day =""
+warn_day = []
 
 for row in range(len(lst)):
     #csvの1列目でヒットする値を探し、配列を作ります。
@@ -20,8 +20,9 @@ for row in range(len(lst)):
     obj_day = obj_day.date()
     tod_day = today + relativedelta(months=3)
     if tod_day >= obj_day: #この辺で日付計算する
-        warn_day = str(warn_day) + lst[row][0] + ","
+        warn_day.append(lst[row][0] + "　期限切れ:" + str(lst[row][1]) + '\n')
 
 if warn_day != "":
     # メッセージボックスを表示
-    wx.MessageBox(warn_day + "の保守が３ヶ月以内に終了します", u'保守切れ通知', wx.ICON_EXCLAMATION)
+    warn_out = ''.join(warn_day)
+    wx.MessageBox("以下が3ヶ月以内に期限切れです。\n" + warn_out, u'期限切れ通知', wx.ICON_EXCLAMATION)
