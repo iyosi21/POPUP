@@ -5,7 +5,7 @@ class Config:
         self.limit = "3"
         self.message = str(self.limit) + "ヶ月以内に終了します"
 
-import csv, wx, datetime, ast, re
+import csv, wx, datetime,
 from dateutil.relativedelta import relativedelta
 
 #設定ファイル読み出し
