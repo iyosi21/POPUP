@@ -1,10 +1,37 @@
 # -*- coding: utf-8 -*-
-import csv
-import wx
-import datetime
+class Config:
+    def __init__(self):
+        self.name ="期限切れ通知"
+        self.limit = "3"
+        self.message = str(self.limit) + "ヶ月以内に終了します"
+
+import csv, wx, datetime, ast, re
 from dateutil.relativedelta import relativedelta
 
+#設定ファイル読み出し
+Conf_t = Config()
+try:
+    f_config = open("conf.txt", "r",encoding="utf-8")
+    conf = f_config.readlines()
+    for lines in range(len(conf)):
+        conf[lines] = conf[lines].replace("\n","")
+        conf[lines] = conf[lines].split('：',1)[-1]
+
+    if type(conf[0]) is str: 
+        if type(int(conf[1])) is int:
+             if type(conf[2]) is str:
+                Conf_t.name = conf[0]   
+                Conf_t.limit = int(conf[1])
+                Conf_t.message = conf[2]
+          
+except(FileNotFoundError):
+    print("conf.txtファイルが見つかりません")
+except(ValueError):
+    print("期限の設定が数字ではありません")
+
+
 app = wx.App()
+
 
 # メッセージボックスを表示
 today = datetime.date.today()
@@ -12,17 +39,23 @@ today = datetime.date.today()
 #CSV読み込み
 f = open("list.csv", "r")
 lst = list(csv.reader(f))
+f.close()
 warn_day = []
 
 for row in range(len(lst)):
-    #csvの1列目でヒットする値を探し、配列を作ります。
-    obj_day = datetime.datetime.strptime(lst[row][1], '%Y%m%d')
-    obj_day = obj_day.date()
-    tod_day = today + relativedelta(months=3)
-    if tod_day >= obj_day: #この辺で日付計算する
-        warn_day.append(lst[row][0] + "　期限切れ:" + str(lst[row][1]) + '\n')
+    if row == 0:
+        #csvの1行目はカラム名なので飛ばす。
+        continue
 
-if warn_day != "":
-    # メッセージボックスを表示
+    if lst[row][2] == "T": #フラグ列がTであれば日付判定をする。
+        obj_day = datetime.datetime.strptime(lst[row][1], '%Y%m%d')
+        obj_day = obj_day.date()
+        tod_day = today + relativedelta(months=int(Conf_t.limit))
+        if tod_day >= obj_day: #この辺で日付計算する
+            warn_day.append(lst[row][0] + "　期限:" + str(lst[row][1]) + '\n')
+
+if warn_day:
+    #配列が空か調べる。
     warn_out = ''.join(warn_day)
-    wx.MessageBox("以下が3ヶ月以内に期限切れです。\n" + warn_out, u'期限切れ通知', wx.ICON_EXCLAMATION)
+    wx.MessageBox(Conf_t.message+"\n" + warn_out, Conf_t.name, wx.ICON_EXCLAMATION)
+    
