@@ -58,7 +58,6 @@ if warn_day:
     #配列が空か調べる。
     warn_out = ''.join(warn_day)
     hantei = wx.MessageBox(Conf_t.message+"\n" + warn_out + "\n設定ファイルを編集しますか？", Conf_t.name, wx.YES_NO | wx.ICON_EXCLAMATION | wx.NO_DEFAULT)
-    print(hantei)
     if hantei == 2:
         ps = subprocess.Popen(['start','list.csv'], shell=True)
         ps = subprocess.Popen(['notepad','conf.txt'])
