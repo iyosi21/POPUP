@@ -5,7 +5,7 @@ class Config:
         self.limit = "3"
         self.message = str(self.limit) + "ヶ月以内に終了します"
 
-import csv, wx, datetime
+import csv, wx, datetime, subprocess
 from dateutil.relativedelta import relativedelta
 
 #設定ファイル読み出し
@@ -57,5 +57,11 @@ for row in range(len(lst)):
 if warn_day:
     #配列が空か調べる。
     warn_out = ''.join(warn_day)
-    wx.MessageBox(Conf_t.message+"\n" + warn_out, Conf_t.name, wx.ICON_EXCLAMATION)
-    
+    hantei = wx.MessageBox(Conf_t.message+"\n" + warn_out + "\n設定ファイルを編集しますか？", Conf_t.name, wx.YES_NO | wx.ICON_EXCLAMATION | wx.NO_DEFAULT)
+    print(hantei)
+    if hantei == 2:
+        ps = subprocess.Popen(['start','list.csv'], shell=True)
+        ps = subprocess.Popen(['notepad','conf.txt'])
+
+
+
